@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch with Laps</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(blue,white);
+}
+
+.stopwatch {
+    text-align: center;
+    background: #000000;
+    width: 80%;
+    padding: 20px;
+    height: 70%;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.stopwatch:hover{
+    box-shadow: -10px 10px 10px black;
+    transition: 0.4s;
+}
+
+#display {
+    font-size:80px;
+    margin-bottom: 20px;
+    margin-top: 80px;
+    color: white;
+}
+
+.controls button {
+    font-size: 1.2em;
+    margin: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: #fff;
+    transition: background 0.3s;
+}
+button:hover{
+    box-shadow: -3px 3px 3px white;
+}
+
+.controls button:hover {
+    background: #0056b3;
+}
+
+#laps {
+    font-size:20px;
+    color: white;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#lapList {
+    list-style: none;
+    padding: 0;
+}
+
+#lapList li {
+    font-size: 1.2em;
+    margin: 5px 0;
+}
+span{
+    font-size: 60px;
+}
+
+</style>
+<body>
+    <div class="stopwatch">
+        <div id="display">00<span>Hr:</span>00<span>Min:</span>00<span>Sec:</span>000<span>ms</span></div>
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="stop">Stop</button>
+            <button id="reset">Reset</button>
+            <button id="lap">Lap</button>
+        </div>
+        <div id="laps">
+            <h3>Laps</h3>
+            <ul id="lapList"></ul>
+        </div>
+    </div>
+    <script>
+        // script.js
+let startTime;
+let updatedTime;
+let difference;
+let tInterval;
+let running = false;
+let lapCounter = 1;
+const display = document.getElementById("display");
+const lapList = document.getElementById("lapList");
+
+document.getElementById("start").addEventListener("click", function() {
+    if (!running) {
+        startTimer();
+        running = true;
+        document.getElementById("start").disabled = true; 
+    }
+});
+
+document.getElementById("stop").addEventListener("click", function() {
+    if (running) {
+        stopTimer();
+        running = false;
+        document.getElementById("start").disabled = false; 
+    }
+});
+
+document.getElementById("reset").addEventListener("click", function() {
+    stopTimer();
+    running = false;
+    display.textContent = "00Hr:00Min:00Sec:000ms";
+    lapList.innerHTML = "";
+    lapCounter = 1;
+    document.getElementById("start").disabled = false; 
+});
+
+document.getElementById("lap").addEventListener("click", function() {
+    if (running) {
+        const lapTime = display.textContent;
+        const lapItem = document.createElement("li");
+        lapItem.textContent =` Lap ${lapCounter}: ${lapTime}`;
+        lapList.appendChild(lapItem);
+        lapCounter++;
+    }
+});
+
+function startTimer() {
+    startTime = new Date().getTime();
+    tInterval = setInterval(updateDisplay, 10); 
+}
+
+function stopTimer() {
+    clearInterval(tInterval);
+}
+
+function updateDisplay() {
+    updatedTime = new Date().getTime();
+    difference = updatedTime - startTime;
+    
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    const milliseconds = Math.floor((difference % 1000) / 10);
+    
+    const formattedHours = (hours < 10) ? "0" + hours : hours;
+    const formattedMinutes = (minutes < 10) ? "0" + minutes : minutes;
+    const formattedSeconds = (seconds < 10) ? "0" + seconds : seconds;
+    const formattedMilliseconds = (milliseconds < 10) ? "0" + milliseconds : milliseconds;
+    
+    display.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}:${formattedMilliseconds}`;
+}
+
+    </script>
+</body>
+</html>
